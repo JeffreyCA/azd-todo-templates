@@ -1,0 +1,20 @@
+on:
+  workflow_dispatch:
+  workflow_call:
+  pull_request:
+    branches: 
+      - main
+
+jobs:
+  bicep-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Upgrade bicep
+        run: |
+          which bicep
+          sudo curl -o $(which bicep) -L https://github.com/Azure/bicep/releases/download/v0.34.44/bicep-linux-x64
+          sudo chmod +x $(which bicep)
+      - name: Lint .bicep files
+        run: $ErrorActionPreference='Continue'; eng/scripts/Test-BicepLint.ps1 -Verbose
+        shell: pwsh
